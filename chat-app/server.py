@@ -1,4 +1,10 @@
 import socket
+import signal
+import sys
+
+def signal_handler(sig, frame):
+    sys.exit()
+signal.signal(signal.SIGINT, signal_handler)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(("localhost", 1235))
