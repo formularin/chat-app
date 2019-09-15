@@ -2,5 +2,6 @@ venv
 .DS_Store
 chat-app/.server.py.swp
 chat-app/.client.py.swp
+chat-app/.__main__.py.swp
 .gitignore.swp
 .vscode
