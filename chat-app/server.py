@@ -1,4 +1,5 @@
 import socket
+import subprocess
 import sys
 import threading
 
@@ -46,7 +47,7 @@ def create_connections():
 
 if __name__ == "__main__":
     
-    ip = input("ip address: ")
+    ip = subprocess.check_output(["ipconfig", "getifaddr", "en0"]).decode("utf-8")
     port = input("port: ")
 
     # create socket
