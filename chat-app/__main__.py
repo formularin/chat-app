@@ -12,14 +12,12 @@ if __name__ == "__main__":
         f.write(key)
     
     # get user info
-    user_secrets = []
-    user_secrets.append(input('Username: '))
     os.system("stty -echo")
-    user_secrets.append(input('Password: '))
+    password = input('Password: ')
     os.system("stty echo")
     print()
        
-    bytes_info = '\n'.join(user_secrets).encode("utf-8")
+    bytes_info = password.encode("utf-8")
     fernet = Fernet(key)
     encrypted = fernet.encrypt(bytes_info)
 
