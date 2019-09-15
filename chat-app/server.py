@@ -27,6 +27,7 @@ def handle_client_message(clientsocket, address):
             clientsocket.close()
             clientsockets.remove(clientsocket)
             addresses.remove(address)
+            print(f"Connection for {address} has been severed")
             break
 
 def create_connections():

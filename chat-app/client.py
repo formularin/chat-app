@@ -25,9 +25,11 @@ def receive_messages():
 
 if __name__ == "__main__":
     
-    server = input()
+    server = input("server: ")
+    port = input("port: ")
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((server, 1237))   
+    s.connect((server, int(port)))
+    print("Welcome to the server!")   
     
     def signal_handler(sig, frame):
         os._exit(1)
