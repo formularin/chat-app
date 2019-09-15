@@ -24,6 +24,11 @@ def handle_client_message(clientsocket, address):
 
             for c in clientsockets:
                 c.send(bytes(msg, "utf-8"))
+        else:
+            clientsocket.close()
+            clientsockets.remove(clientsocket)
+            addresses.remove(address)
+            break
 
 def create_connections():
     """

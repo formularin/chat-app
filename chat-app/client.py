@@ -14,7 +14,8 @@ def send_messages():
     """
     while True:
         msg = input()
-        s.send(bytes(msg, "utf-8"))
+        if msg != "":
+            s.send(bytes(msg, "utf-8"))
         print("\033[A                             \033[A")
 
 def receive_messages():
