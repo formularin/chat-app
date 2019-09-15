@@ -16,18 +16,29 @@ def handle_client_message(clientsocket, address):
     Send recieved message back to 
     client and also print to console
     """
+    n_messages = 0
+    username = ""
     while True:
         msg = clientsocket.recv(1024)
         if msg != b'':
-            msg = f"{address}: " + msg.decode("utf-8")
+            if n_messages == 0:
+                username = msg.decode("utf-8")
+                msg = username + " has joined the server!"
+                for c in clientsockets[:-1]:
+                    c.send(bytes(msg, "utf-8"))
+            else:
+                msg = f"{username}: " + msg.decode("utf-8")
+                for c in clientsockets:
+                    c.send(bytes(msg, "utf-8"))
 
-            for c in clientsockets:
-                c.send(bytes(msg, "utf-8"))
+            n_messages += 1
         else:
             clientsocket.close()
             clientsockets.remove(clientsocket)
             addresses.remove(address)
             print(f"Connection for {address} has been severed")
+            for c in clientsockets:
+                c.send(bytes(username + " has left the server", "utf-8"))
             break
 
 def create_connections():

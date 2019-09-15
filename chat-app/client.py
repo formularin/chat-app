@@ -29,8 +29,11 @@ if __name__ == "__main__":
     port = input("port: ")
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((server, int(port)))
-    print("Welcome to the server!")   
+    print("Successfully connected to the server!")   
     
+    username = input("username: ")
+    s.send(bytes(username, 'utf-8'))    
+ 
     def signal_handler(sig, frame):
         os._exit(1)
     signal.signal(signal.SIGINT, signal_handler)    
