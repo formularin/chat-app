@@ -1,11 +1,7 @@
-import curses
+import signal
 import socket
+import os
 import threading
-
-server = input()
-
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((server, 1237))
 
 def send_messages():
     """
@@ -28,7 +24,17 @@ def receive_messages():
         print(data.decode("utf-8"))    
 
 if __name__ == "__main__":
+    
+    server = input()
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((server, 1237))   
+    
+    def signal_handler(sig, frame):
+        os._exit(1)
+    signal.signal(signal.SIGINT, signal_handler)    
+
     sm = threading.Thread(target=send_messages)
     rm = threading.Thread(target=receive_messages)
     sm.start()
     rm.start()
+        
