@@ -3,4 +3,3 @@ venv
 chat-app/.server.py.swp
 chat-app/.client.py.swp
 .gitignore.swp
-test.py

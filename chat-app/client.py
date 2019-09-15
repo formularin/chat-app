@@ -1,7 +1,5 @@
 import curses
 import socket
-import string
-import threading
 
 
 class Canvas:
@@ -37,37 +35,10 @@ class Message:
 server = input()
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((server, 1237))
+s.connect((server, 1235))
 
-def send_messages(stdscr, canvas):
-    """
-    Sends input to server which
-    sends to other clients
-    """
-    while True:
-        # TODO: input for msg
-        key = stdscr.getch()  # for now you can only send one char at a time
-        if chr(key) in string.printable:
-            s.send(bytes(chr(key), "utf-8"))
-
-def receive_messages(stdscr, canvas):
-    """
-    Constantly receives data from
-    server and prints to console
-    """
-    n_messages = 0
-    while True:
-        data = s.recv(1024)
-        msg = Message(x)
-        stdscr.addstr(data.decode("utf-8"))
-
-def main(stdscr):
-    c = Canvas(curses.COLS - 1, curses.LINES - 2)
-    
-    sm = threading.Thread(target=send_messages, args=[stdscr, c])
-    rm = threading.Thread(target=receive_messages, args=[stdscr, c])
-    sm.start()
-    rm.start()
-
-if __name__ == "__main__":
-    curses.wrapper(main)
+while True:
+    msg = input()
+    s.send(bytes(msg, "utf-8"))
+    data = s.recv(1024)
+    print("client:", data.decode("utf-8"))
