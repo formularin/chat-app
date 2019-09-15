@@ -2,15 +2,6 @@ import socket
 import sys
 import threading
 
-# create socket
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind(("localhost", 1237))
-s.listen(5)
-
-# client info
-clientsockets = []
-addresses = []
-
 def handle_client_message(clientsocket, address):
     """
     Send recieved message back to 
@@ -54,4 +45,17 @@ def create_connections():
         hcm.start()
 
 if __name__ == "__main__":
+    
+    ip = input("ip address: ")
+    port = input("port: ")
+
+    # create socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind((ip, int(port)))
+    s.listen(5)
+    
+    # client info
+    clientsockets = []
+    addresses = []
+
     create_connections()
