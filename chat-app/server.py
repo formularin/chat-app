@@ -1,7 +1,13 @@
+from os.path import abspath, dirname
+import os
 import socket
 import subprocess
 import sys
 import threading
+
+from cryptography.fernet import Fernet
+
+HOME = '/'.join(abspath(dirname(__file__)).split('/')[:3])
 
 def handle_client_message(clientsocket, address):
     """
@@ -47,16 +53,34 @@ def create_connections():
 
 if __name__ == "__main__":
     
-    ip = subprocess.check_output(["ipconfig", "getifaddr", "en0"]).decode("utf-8")
-    port = input("port: ")
-
-    # create socket
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind((ip, int(port)))
-    s.listen(5)
+    os.system("stty -echo")
+    password = input("Password: ")
+    os.system("stty echo")
+    print()
     
-    # client info
-    clientsockets = []
-    addresses = []
+    with open(f"{HOME}/.chat-app.key", "rb") as f:
+        key = f.read()
+    
+    fernet = Fernet(key)
+    
+    # read encrypted message
+    with open(f'{HOME}/.chat-app-user-secrets', 'rb') as f:
+        encrypted = f.read()
 
-    create_connections()
+    if password == fernet.decrypt(encrypted).decode("utf-8"):
+ 
+        ip = subprocess.check_output(["ipconfig", "getifaddr", "en0"]).decode("utf-8")[:-1]
+        port = input("port: ")
+
+        # create socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind((ip, int(port)))
+        s.listen(5)
+        
+        # client info
+        clientsockets = []
+        addresses = []
+
+        create_connections()
+    else:
+        print('incorrect password')

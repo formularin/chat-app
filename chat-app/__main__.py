@@ -1,5 +1,7 @@
-from cryptography.fernet import Fernet
+import os
 from os.path import dirname, abspath
+
+from cryptography.fernet import Fernet
 
 HOME = '/'.join(abspath(dirname(__file__)).split('/')[:3])
 
