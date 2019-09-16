@@ -8,6 +8,7 @@ chat-app/__pycache__
 .gitignore.swp
 .setup.py.swp
 .LICENSE.txt.swp
+.README.md.swp
 .vscode
 build
 dist
