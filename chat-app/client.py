@@ -14,7 +14,7 @@ def send_messages():
     sends to other clients
     """
     while True:
-        msg = input()
+        msg = input("message: ")
         if msg != "":
             s.send(bytes(msg, "utf-8"))
         print("\033[A                             \033[A")
