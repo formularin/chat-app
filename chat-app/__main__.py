@@ -49,4 +49,6 @@ fi
     with open(f"{bin_dir}/chat-app", "w+") as f:
         f.write(script)
     
+    # give permission to executable
+    subprocess.run(["chmod", "+x", "~/bin/chat-app"]) 
     

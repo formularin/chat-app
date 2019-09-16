@@ -9,16 +9,13 @@ Allows people to chat through terminal
 ```bash
 git clone https://github.com/lol-cubes/chat-app.git
 pip install cryptography
-cd chat-app
-python3 chat-app  # setup
-chmod +x ~/bin/chat-app
+python3 chat-app/chat-app  # setup
 ```
 ### Install Using Pip:
 
 ```bash
 pip install chat-app
 python3 -m chat-app  # setup
-chmod +x ~/bin/chat-app
 ```
 
 ## Usage

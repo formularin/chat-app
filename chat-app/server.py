@@ -68,8 +68,10 @@ if __name__ == "__main__":
         encrypted = f.read()
 
     if password == fernet.decrypt(encrypted).decode("utf-8"):
- 
-        ip = subprocess.check_output(["ipconfig", "getifaddr", "en0"]).decode("utf-8")[:-1]
+
+        ip = subprocess.check_output(
+                "ifconfig | grep \"...\....\..\....\" | cut -d ' ' -f2",
+                shell=True).decode("utf-8")[:-1] 
         port = input("port: ")
 
         # create socket
