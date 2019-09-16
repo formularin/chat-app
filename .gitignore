@@ -1,4 +1,5 @@
 venv
+test.py
 .DS_Store
 chat-app/.server.py.swp
 chat-app/.client.py.swp
