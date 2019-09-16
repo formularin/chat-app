@@ -1,4 +1,4 @@
-from os.path import abspath, dirname
+import getpass
 import os
 import signal
 import socket
@@ -8,7 +8,7 @@ import threading
 
 from cryptography.fernet import Fernet
 
-HOME = '/'.join(abspath(dirname(__file__)).split('/')[:3])
+HOME = f"/Users/{getpass.getuser()}"
 
 def signal_handler(sig, frame):
     os._exit(1)

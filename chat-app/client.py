@@ -1,12 +1,12 @@
+import getpass
 import signal
 import socket
 import os
-from os.path import abspath, dirname
 import threading
 
 from cryptography.fernet import Fernet
 
-HOME = '/'.join(abspath(dirname(__file__)).split('/')[:3])
+HOME = f"/Users/{getpass.getuser()}"
 
 def signal_handler(sig, frame):
     print("\033[A                             \033[A")
