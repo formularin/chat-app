@@ -6,4 +6,5 @@ chat-app/.client.py.swp
 chat-app/.__main__.py.swp
 chat-app/__pycache__
 .gitignore.swp
+.setup.py.swp
 .vscode
