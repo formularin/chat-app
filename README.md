@@ -38,7 +38,7 @@ Port is any 4-digit number that isn't already in use
 chat-app client
 ```
 
-The server is the IP address of the server machine
+The server is the IP address of the server machine.
 Find your IP address (on unix) using the command:
 ```bash
 ipconfig getifaddr en0
