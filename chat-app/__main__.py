@@ -50,5 +50,5 @@ fi
         f.write(script)
     
     # give permission to executable
-    subprocess.run(["chmod", "+x", "~/bin/chat-app"]) 
+    os.system("chmod +x ~/bin/chat-app") 
     

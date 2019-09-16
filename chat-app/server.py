@@ -9,6 +9,10 @@ from cryptography.fernet import Fernet
 
 HOME = '/'.join(abspath(dirname(__file__)).split('/')[:3])
 
+# message statuses (each is first byte of message):
+# 1 - message received
+# 2 - someone joined/left the server
+
 def handle_client_message(clientsocket, address):
     """
     Send recieved message back to 
@@ -25,7 +29,7 @@ def handle_client_message(clientsocket, address):
                 for c in clientsockets[:-1]:
                     c.send(bytes(msg, "utf-8"))
             else:
-                msg = f"{username}: " + msg.decode("utf-8")
+                msg = f"1{username}: " + msg.decode("utf-8")
                 for c in clientsockets:
                     c.send(bytes(msg, "utf-8"))
 
@@ -36,7 +40,7 @@ def handle_client_message(clientsocket, address):
             addresses.remove(address)
             print(f"Connection for {address} has been severed")
             for c in clientsockets:
-                c.send(bytes(username + " has left the server", "utf-8"))
+                c.send(bytes("2" + username + " has left the server", "utf-8"))
             break
 
 def create_connections():
