@@ -8,13 +8,18 @@ from cryptography.fernet import Fernet
 
 HOME = '/'.join(abspath(dirname(__file__)).split('/')[:3])
 
+def signal_handler(sig, frame):
+    print("\033[A                             \033[A")
+    print("exiting the server...")
+    os._exit(1)
+
 def send_messages():
     """
     Sends input to server which
     sends to other clients
     """
     while True:
-        msg = input("message: ")
+        msg = input("")
         if msg != "":
             s.send(bytes(msg, "utf-8"))
         print("\033[A                             \033[A")
@@ -42,6 +47,8 @@ def receive_messages(username):
 
 if __name__ == "__main__":
     
+    signal.signal(signal.SIGINT, signal_handler)
+    
     os.system("stty -echo") 
     password = input("Password: ")
     os.system("stty echo")
@@ -66,12 +73,6 @@ if __name__ == "__main__":
         
         username = input("username: ")
         s.send(bytes(username, 'utf-8'))    
- 
-        def signal_handler(sig, frame):
-            print("\033[A                             \033[A")
-            print("exiting the server...")
-            os._exit(1)
-        signal.signal(signal.SIGINT, signal_handler)    
 
         sm = threading.Thread(target=send_messages)
         rm = threading.Thread(target=receive_messages, args=[username])

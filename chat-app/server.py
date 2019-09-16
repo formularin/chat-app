@@ -1,5 +1,6 @@
 from os.path import abspath, dirname
 import os
+import signal
 import socket
 import subprocess
 import sys
@@ -8,6 +9,9 @@ import threading
 from cryptography.fernet import Fernet
 
 HOME = '/'.join(abspath(dirname(__file__)).split('/')[:3])
+
+def signal_handler(sig, frame):
+    os._exit(1)
 
 # message statuses (each is first byte of message):
 # 1 - message received
@@ -56,6 +60,8 @@ def create_connections():
         hcm.start()
 
 if __name__ == "__main__":
+
+    signal.signal(signal.SIGINT, signal_handler)
     
     os.system("stty -echo")
     password = input("Password: ")
@@ -83,10 +89,12 @@ if __name__ == "__main__":
         s.bind((ip, int(port)))
         s.listen(5)
         
+        print("Server successfully created")
+ 
         # client info
         clientsockets = []
         addresses = []
 
         create_connections()
     else:
-        print('incorrect password')
+        print('\033[1;31mincorrect password\033[0m')
