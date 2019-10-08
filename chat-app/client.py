@@ -1,0 +1,19 @@
+import curses
+import getpass
+import signal
+import socket
+import os
+import threading
+
+from cryptography.fernet import Fernet
+
+
+def signal_handler(sig, frame):
+    os._exit(1)
+
+
+if __name__ == "__main__":
+    
+    signal.signal(signal.SIGINT, signal_handler)
+
+    curses.wrapper(main)
