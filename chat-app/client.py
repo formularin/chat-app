@@ -12,6 +12,10 @@ def signal_handler(sig, frame):
     os._exit(1)
 
 
+def main(stdscr):
+    pass
+
+
 if __name__ == "__main__":
     
     signal.signal(signal.SIGINT, signal_handler)

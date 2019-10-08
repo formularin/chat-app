@@ -14,7 +14,7 @@ def signal_handler(sig, frame):
     os._exit(1)
 
 
-def main():
+def main(stdscr):
     pass
 
 
