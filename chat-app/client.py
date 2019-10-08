@@ -4,9 +4,7 @@ import socket
 import os
 import threading
 
-from AppKit import NSWorkspace
 from cryptography.fernet import Fernet
-from pynput.keyboard import Key, Listener
 
 HOME = f"/Users/{getpass.getuser()}"
 
@@ -25,13 +23,6 @@ def send_messages():
         """
         Senses whether or not user is typing a message
         """
-        active_app_name = NSWorkspace.sharedWorkspace().frontmostApplication().localizedName()
-        if active_app_name in ["iTerm2", "Terminal"]:
-            # TODO:
-            # Create pynput listener and have variable to which one is added when a key is pressed.
-            # Have separate thread that tells other clients you are typing while and tell them youve stopped when you variable doesnt increase for more than 5 seconds.
-            # End listener on ENTER keypress.
-            pass
         
     def get_input():
         msg = input("")
