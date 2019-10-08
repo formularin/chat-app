@@ -1,6 +1,6 @@
 import getpass
 import os
-from os.path import abspath, dirname, isdir
+from os.path import isdir
 from shutil import copyfile
 
 from cryptography.fernet import Fernet
