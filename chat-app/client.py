@@ -19,11 +19,6 @@ def send_messages():
     sends to other clients
     """
 
-    def get_typing():
-        """
-        Senses whether or not user is typing a message
-        """
-        
     def get_input():
         msg = input("")
         if msg != "":
