@@ -72,6 +72,7 @@ def ask_for_input(stdscr, cursor, canvas, prompt, echo=True):
     
     return input_line.value
 
+
 def main(stdscr, server, port):
     
     try:
@@ -109,6 +110,9 @@ def main(stdscr, server, port):
 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((server, int(port)))
+
+        username = ask_for_input(stdscr, cursor, canvas, "username: ")
+        s.send(bytes(username, 'utf-8'))
 
 
     except ExitException:
