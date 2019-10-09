@@ -19,14 +19,10 @@ def send_messages():
     sends to other clients
     """
 
-    def get_input():
-        msg = input("")
-        if msg != "":
-            s.send(bytes(msg, "utf-8"))
-        print("\033[A                             \033[A")
-
-    while True:
-        ipt = threading.Thread(target=get_input)
+    msg = input("")
+    if msg != "":
+        s.send(bytes(msg, "utf-8"))
+    print("\033[A                             \033[A")
 
        
 def receive_messages(username):
