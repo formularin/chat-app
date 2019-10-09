@@ -14,7 +14,6 @@ class Canvas:
         row_index = (len(self.grid) - 1) - y
         self.grid[row_index][x] = char
 
-
     @property
     def display(self):
         rows = ["".join(row) for row in self.grid][::-1]
@@ -59,7 +58,8 @@ class Image:
 
 
 class InputLine(Image):
-    """Represents a line where if you type, it will record what was typed
+    """
+    Represents a line where if you type, it will record what was typed
     
     Renders on canvas arg and
     if echo is False, will not render typed chars on window.
@@ -110,3 +110,39 @@ class InputLine(Image):
             len_chars = len(self.chars)
             self.chars = [Char(i, 0, " ") for i in range(len_chars)]
             self.render()
+
+
+class Cursor(Image):
+    """Represents the block character used to represent cursor"""
+
+    def __init__(self, canvas):
+        Image.__init__(self, canvas, 0, 0, Char(0, 0, u"\u2588"))
+
+        self.previous_x = self.x
+        self.previous_y = self.y
+
+        self.previous_char = self.chars[0]
+
+    def render(self):
+        """
+        Override inherited render method because
+        this Image can move and has only one char
+        """
+        self.canvas.replace(self.previous_x, self.previous_y, " ")
+        self.canvas.replace(self.x, self.y, self.chars[0])
+
+    def toggle_char(self):
+        """Changes from block char to space for blinking effect"""
+        new_char = self.previous_char
+        old_char = self.chars[0]
+        self.chars[0] = new_char
+        self.previous_char = old_char
+
+    def move(self, x, y):
+        """Moves cursor to (x, y) on the canvas"""
+
+        self.previous_x = self.x
+        self.previous_y = self.y
+
+        self.x = x
+        self.y = y
