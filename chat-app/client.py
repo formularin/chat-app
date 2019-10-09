@@ -27,7 +27,6 @@ def send_messages():
 
     while True:
         ipt = threading.Thread(target=get_input)
-        is_writing = threading.Thread(target=get_typing)        
 
        
 def receive_messages(username):
