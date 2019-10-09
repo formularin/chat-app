@@ -38,6 +38,40 @@ def home_screen(stdscr):
         time.sleep(0.01)
 
 
+def ask_for_input(stdscr, cursor, canvas, prompt, echo=True):
+
+    input_line = graphics.InputLine(canvas, prompt, echo)
+    
+    frame = 0
+    while True:
+
+        key = stdscr.getch()
+
+        if not input_line.submitted:
+
+            # update conceptual renderings of images
+            input_line.type_char(key)
+            cursor.move(0, input_line.cursor_index)
+            if frame % 10 == 0:
+                cursor.toggle_char()
+                
+            # display image changes on canvas
+            input_line.render()
+            cursor.render()
+
+        else:
+            break
+
+        # display canvas on screen
+        stdscr.clear()
+        stdscr.addstr(canvas.display)
+        stdscr.refresh()
+
+        frame += 1
+        time.sleep(0.01)
+    
+    return input_line.value
+
 def main(stdscr, server, port):
     
     try:
@@ -46,42 +80,9 @@ def main(stdscr, server, port):
         home_screen(stdscr)
 
         canvas = graphics.Canvas(curses.LINES, curses.COLS - 1)
-        password_input = graphics.InputLine(canvas, "password: ", echo=False)
         cursor = graphics.Cursor(canvas)
 
-        frame = 0
-        while True:
-            
-            key = stdscr.getch()
-
-            if password_input.submitted == False:
-                
-                # update conceptual renderings of images
-                password_input.type_char(key)
-                cursor.move(0, password_input.cursor_index)
-                if frame % 10 == 0:
-                    cursor.toggle_char()
-                
-                # display image changes on canvas
-                password_input.render()
-                cursor.render()
-
-
-                with open('/Users/Mukeshkhare/Desktop/projects/python/chat-app/file.txt', 'w') as f:
-                    f.write(password_input.value)
-
-            else:
-                break
-                
-            # display canvas on screen
-            stdscr.clear()
-            stdscr.addstr(canvas.display)
-            stdscr.refresh()
-
-            frame += 1
-            time.sleep(0.01)
-
-        password = password_input.value
+        password = ask_for_input(stdscr, cursor, canvas, "password: ", False)
 
         # check if password is correct
 
@@ -108,6 +109,7 @@ def main(stdscr, server, port):
 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((server, int(port)))
+
 
     except ExitException:
         return  # exit function
