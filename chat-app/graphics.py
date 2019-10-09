@@ -39,28 +39,18 @@ class Image:
         self.canvas = canvas
         self.x = x
         self.y = y
-        self.previous_x = self.x
-        self.previous_y = self.y
         self.chars = chars
-        self.previous_chars = self.chars
 
     def render(self):
         """Alter canvas display to update current state of self."""
         # canvas_x means location of char on the canvas
 
-        for char in self.previous_chars:
+        for char in self.chars:
+            
             # replace all previous chars with spaces on canvas
 
-            canvas_x = char.x + self.previous_x
-            canvas_y = char.y + self.previous_y
-
-            self.canvas.replace(canvas_x, canvas_y, " ")
-
-        for char in self.chars:
-            # render all current chars on canvas
-
-            canvas_x = char.x + self.x
-            canvas_y = char.y + self.y
+            canvas_x = self.x + char.x
+            canvas_y = self.y + char.y
 
             self.canvas.replace(canvas_x, canvas_y, char.char)
 
