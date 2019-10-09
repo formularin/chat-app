@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="chat-app",
-    version="1.1.2",
+    version="1.1.4",
     author="Arin Khare",
     author_email="arinmkhare@gmail.com",
     description="Allows people to chat with others through terminal",
