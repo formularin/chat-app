@@ -71,7 +71,7 @@ class InputLine(Image):
         self.cursor_index = self.prompt_length
         self.echo = echo
         self.submitted = False
-        self.final_value = ""
+        self.inputted_chars = []
 
         y = len(canvas.grid) - 1
         prompt_chars = [Char(i, 0, char) for i, char in enumerate(prompt)]
@@ -82,30 +82,31 @@ class InputLine(Image):
 
     @property
     def value(self):
-        if self.submitted:
-            return self.final_value
-        else:
-            return "".join([c.char for c in self.chars])[self.prompt_length:]
+        return ''.join(self.inputted_chars)
 
     def _del_char(self):
         """Removes last char from input field"""
         if self.cursor_index > self.prompt_length:
             self.chars[self.cursor_index] = Char(self.cursor_index, 0, " ")
             self.cursor_index -= 1
+            self.inputted_chars = self.inputted_chars[:-1]
 
     def type_char(self, char):
         """Adds char to value of input field"""
         if not (char in [-1, 127, 10]):
             try:
-                self.chars[self.cursor_index] = Char(self.cursor_index, 0, chr(char))
+                if self.echo:
+                    new_char = chr(char)
+                else:
+                    new_char = "*"
+                self.chars[self.cursor_index] = Char(self.cursor_index, 0, new_char)
                 self.cursor_index += 1
+                self.inputted_chars.append(chr(char))
             except Exception:
                 pass
         elif char == 127:
             self._del_char()
         elif char == 10:
-            # update final_value attribute so value property doesn't return empty string from now on
-            self.final_value = self.value
             self.submitted = True
             len_chars = len(self.chars)
             self.chars = [Char(i, 0, " ") for i in range(len_chars)]

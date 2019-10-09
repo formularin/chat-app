@@ -1,11 +1,11 @@
 import getpass
 import os
-from os.path import isdir
+from os.path import abspath, dirname, isdir
 from shutil import copyfile
 
 from cryptography.fernet import Fernet
 
-CWD = abspath(dirname(__file__)) 
+CWD = abspath(dirname(__file__))
 HOME = f'/Users/{getpass.getuser()}'
 
 if __name__ == "__main__":

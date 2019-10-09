@@ -10,11 +10,17 @@ from cryptography.fernet import Fernet
 import graphics
 import art
 
+
+HOME = f"/Users/{getpass.getuser()}"
+
+
 class ExitException(Exception):
     """Dummy exception for exiting script on ^c"""
 
+
 def signal_handler(sig, frame):
     raise ExitException()
+
 
 def home_screen(stdscr):
 
@@ -39,7 +45,7 @@ def main(stdscr):
         home_screen(stdscr)
 
         canvas = graphics.Canvas(curses.LINES, curses.COLS - 1)
-        password_input = graphics.InputLine(canvas, "password: ")
+        password_input = graphics.InputLine(canvas, "password: ", echo=False)
         cursor = graphics.Cursor(canvas)
 
         frame = 0
@@ -58,6 +64,11 @@ def main(stdscr):
                 # display image changes on canvas
                 password_input.render()
                 cursor.render()
+
+
+                with open('/Users/Mukeshkhare/Desktop/projects/python/chat-app/file.txt', 'w') as f:
+                    f.write(password_input.value)
+
             else:
                 break
                 
@@ -70,6 +81,29 @@ def main(stdscr):
             time.sleep(0.01)
 
         password = password_input.value
+
+        # check if password is correct
+
+        with open(f"{HOME}/.chat-app.key", "rb") as f:
+            key = f.read()
+    
+        fernet = Fernet(key)
+        
+        # read encrypted message
+        with open(f'{HOME}/.chat-app-user-secrets', 'rb') as f:
+            encrypted = f.read()
+
+        if password == fernet.decrypt(encrypted).decode("utf-8"):
+            pass
+        else:
+            while True:
+
+                stdscr.clear()
+                stdscr.addstr("incorrect password, press ^c to quit")
+                stdscr.refresh()
+                time.sleep(0.01)
+
+            return
 
     except ExitException:
         return  # exit function
