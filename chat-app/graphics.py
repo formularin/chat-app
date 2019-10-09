@@ -2,7 +2,7 @@ class Canvas:
     """Represents string that is displayed to the screen with each frame"""
 
     def __init__(self, height, width):
-        self.grid = [["#" for _ in range(width)] for _ in range(height)]
+        self.grid = [[" " for _ in range(width)] for _ in range(height)]
 
     def replace(self, x, y, char):
         """
@@ -17,7 +17,7 @@ class Canvas:
 
     @property
     def display(self):
-        rows = ["".join(row) for row in self.grid]
+        rows = ["".join(row) for row in self.grid][::-1]
         return '\n'.join(rows)
 
 
@@ -28,7 +28,10 @@ class Char:
 
         self.x = x
         self.y = y
-        self.char = char  # string
+        if len(char) == 1:
+            self.char = char
+        else:
+            raise ValueError("Char object can only represent one char.")
 
 
 class Image:
@@ -67,24 +70,43 @@ class InputLine(Image):
         self.prompt_length = len(prompt)
         self.cursor_index = self.prompt_length
         self.echo = echo
+        self.submitted = False
+        self.final_value = ""
 
         y = len(canvas.grid) - 1
         prompt_chars = [Char(i, 0, char) for i, char in enumerate(prompt)]
-        input_chars = [Char(i, 0) for i in range(self.propmt_length, len(canvas.grid[-1]))]
+        input_chars = [Char(i, 0, " ") for i in range(self.prompt_length, len(canvas.grid[-1]))]
         chars = prompt_chars + input_chars
 
         Image.__init__(self, canvas, 0, y, chars)
 
     @property
     def value(self):
-        return "".join(self.chars)
+        if self.submitted:
+            return self.final_value
+        else:
+            return "".join([c.char for c in self.chars])[self.prompt_length:]
 
     def _del_char(self):
         """Removes last char from input field"""
-        self.chars[self.prompt_length + self.cursor_index] = " "
-        self.cursor_index -= 1
+        if self.cursor_index > self.prompt_length:
+            self.chars[self.cursor_index] = Char(self.cursor_index, 0, " ")
+            self.cursor_index -= 1
 
-    def add_char(self, char):
+    def type_char(self, char):
         """Adds char to value of input field"""
-        self.chars[self.prompt_length + self.cursor_index] = char
-        self.cursor_index += 1
+        if not (char in [-1, 127, 10]):
+            try:
+                self.chars[self.cursor_index] = Char(self.cursor_index, 0, chr(char))
+                self.cursor_index += 1
+            except Exception:
+                pass
+        elif char == 127:
+            self._del_char()
+        elif char == 10:
+            # update final_value attribute so value property doesn't return empty string from now on
+            self.final_value = self.value
+            self.submitted = True
+            len_chars = len(self.chars)
+            self.chars = [Char(i, 0, " ") for i in range(len_chars)]
+            self.render()
