@@ -2,6 +2,7 @@ import curses
 import getpass
 import signal
 import socket
+import sys
 import threading
 import time
 
@@ -37,7 +38,7 @@ def home_screen(stdscr):
         time.sleep(0.01)
 
 
-def main(stdscr):
+def main(stdscr, server, port):
     
     try:
         stdscr.nodelay(True)
@@ -105,6 +106,9 @@ def main(stdscr):
 
             return
 
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((server, int(port)))
+
     except ExitException:
         return  # exit function
 
@@ -113,4 +117,9 @@ if __name__ == "__main__":
     
     signal.signal(signal.SIGINT, signal_handler)
 
-    curses.wrapper(main)
+    try:
+        server, port = sys.argv[1:3]
+    except ValueError:
+        raise Exception("no inputted server or port.")
+
+    curses.wrapper(main, server, port)
