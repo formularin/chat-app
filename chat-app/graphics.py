@@ -55,3 +55,36 @@ class Image:
             self.canvas.replace(canvas_x, canvas_y, char.char)
 
 
+class InputLine(Image):
+    """Represents a line where if you type, it will record what was typed
+    
+    Renders on canvas arg and
+    if echo is False, will not render typed chars on window.
+    """
+
+    def __init__(self, canvas, prompt, echo=True):
+        
+        self.prompt_length = len(prompt)
+        self.cursor_index = self.prompt_length
+        self.echo = echo
+
+        y = len(canvas.grid) - 1
+        prompt_chars = [Char(i, 0, char) for i, char in enumerate(prompt)]
+        input_chars = [Char(i, 0) for i in range(self.propmt_length, len(canvas.grid[-1]))]
+        chars = prompt_chars + input_chars
+
+        Image.__init__(self, canvas, 0, y, chars)
+
+    @property
+    def value(self):
+        return "".join(self.chars)
+
+    def _del_char(self):
+        """Removes last char from input field"""
+        self.chars[self.prompt_length + self.cursor_index] = " "
+        self.cursor_index -= 1
+
+    def add_char(self, char):
+        """Adds char to value of input field"""
+        self.chars[self.prompt_length + self.cursor_index] = char
+        self.cursor_index += 1
