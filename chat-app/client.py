@@ -2,7 +2,6 @@ import curses
 import getpass
 import signal
 import socket
-import os
 import threading
 import time
 
@@ -41,21 +40,33 @@ def main(stdscr):
 
         canvas = graphics.Canvas(curses.LINES, curses.COLS - 1)
         password_input = graphics.InputLine(canvas, "password: ")
+        cursor = graphics.Cursor(canvas)
 
+        frame = 0
         while True:
             
             key = stdscr.getch()
 
             if password_input.submitted == False:
+                
+                # update conceptual renderings of images
                 password_input.type_char(key)
+                cursor.move(0, password_input.cursor_index)
+                if frame % 10 == 0:
+                    cursor.toggle_char()
+                
+                # display image changes on canvas
                 password_input.render()
+                cursor.render()
             else:
                 break
-
+                
+            # display canvas on screen
             stdscr.clear()
             stdscr.addstr(canvas.display)
             stdscr.refresh()
 
+            frame += 1
             time.sleep(0.01)
 
         password = password_input.value

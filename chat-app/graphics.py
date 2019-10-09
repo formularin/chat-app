@@ -116,7 +116,7 @@ class Cursor(Image):
     """Represents the block character used to represent cursor"""
 
     def __init__(self, canvas):
-        Image.__init__(self, canvas, 0, 0, Char(0, 0, u"\u2588"))
+        Image.__init__(self, canvas, 0, 0, [Char(0, 0, u"\u2588")])
 
         self.previous_x = self.x
         self.previous_y = self.y
@@ -128,8 +128,14 @@ class Cursor(Image):
         Override inherited render method because
         this Image can move and has only one char
         """
-        self.canvas.replace(self.previous_x, self.previous_y, " ")
-        self.canvas.replace(self.x, self.y, self.chars[0])
+        self.canvas.replace(
+            self.previous_y,
+            (len(self.canvas.grid) - 1) - self.previous_x,
+            " ")
+        self.canvas.replace(
+            self.y,
+            (len(self.canvas.grid) - 1) - self.x,
+            self.chars[0].char)
 
     def toggle_char(self):
         """Changes from block char to space for blinking effect"""
