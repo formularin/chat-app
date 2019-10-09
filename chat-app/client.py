@@ -18,13 +18,12 @@ def send_messages():
     Sends input to server which
     sends to other clients
     """
+    while True:
+        msg = input("")
+        if msg != "":
+            s.send(bytes(msg, "utf-8"))
+        print("\033[A                             \033[A")
 
-    msg = input("")
-    if msg != "":
-        s.send(bytes(msg, "utf-8"))
-    print("\033[A                             \033[A")
-
-       
 def receive_messages(username):
     """
     Constantly reveieves data from
