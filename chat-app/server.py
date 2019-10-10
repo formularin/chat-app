@@ -25,7 +25,11 @@ def handle_client_message(clientsocket, address):
     n_messages = 0
     username = ""
     while True:
-        msg = clientsocket.recv(1024)
+        try:
+            msg = clientsocket.recv(1024)
+        except ConnectionResetError:
+            print("connection reset error")
+            continue
         if msg != b'':
             if n_messages == 0:
                 username = msg.decode("utf-8")
@@ -34,6 +38,7 @@ def handle_client_message(clientsocket, address):
                     c.send(bytes(msg, "utf-8"))
             else:
                 msg = f"1{username}: " + msg.decode("utf-8")
+                print(msg[1:])
                 for c in clientsockets:
                     c.send(bytes(msg, "utf-8"))
 

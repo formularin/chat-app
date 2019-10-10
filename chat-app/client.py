@@ -24,11 +24,14 @@ def signal_handler(sig, frame):
 
 
 def home_screen(stdscr):
+    """Displays home screen"""
+
+    # stdscr.nodelay(True) has already been called
 
     while True:
 
         key = stdscr.getch()
-        if key != -1:
+        if key != -1:  # if key isn't nothing
             return
 
         stdscr.clear()
@@ -39,6 +42,7 @@ def home_screen(stdscr):
 
 
 def ask_for_input(stdscr, cursor, canvas, prompt, echo=True):
+    """Creates input line at bottom of screen"""
 
     input_line = graphics.InputLine(canvas, prompt, echo)
     
@@ -70,14 +74,26 @@ def ask_for_input(stdscr, cursor, canvas, prompt, echo=True):
         frame += 1
         time.sleep(0.01)
     
-    return input_line.value
+    return input_line.value  # return submitted text
+
+
+def send_messages(stdscr, cursor, canvas, s):
+    """
+    Sends input to server which
+    sends to other clients
+    """
+    while True:
+        msg = ask_for_input(stdscr, cursor, canvas, "message: ")
+        if msg != "":
+            s.send(bytes(msg, "utf-8"))
 
 
 def main(stdscr, server, port):
     
     try:
-        stdscr.nodelay(True)
-        curses.curs_set(0)
+        stdscr.nodelay(True)  # don't wait for keypress
+        curses.curs_set(0)  # hide cursor
+        
         home_screen(stdscr)
 
         canvas = graphics.Canvas(curses.LINES, curses.COLS - 1)
@@ -97,32 +113,42 @@ def main(stdscr, server, port):
             encrypted = f.read()
 
         if password == fernet.decrypt(encrypted).decode("utf-8"):
+            # if correct
             pass
         else:
+            # if incorrect
             while True:
-
                 stdscr.clear()
                 stdscr.addstr("incorrect password, press ^c to quit")
+                # typing ^c will lead to except block and exit function
                 stdscr.refresh()
                 time.sleep(0.01)
 
-            return
-
+        # connect to server
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((server, int(port)))
 
+        # connect to server
         username = ask_for_input(stdscr, cursor, canvas, "username: ")
         s.send(bytes(username, 'utf-8'))
 
+        # using thread because later will have to simeltaneously receive messages
+        sm = threading.Thread(target=send_messages, args=(stdscr, cursor, canvas, s))
+        sm.start()
+# -------------------------------for stackoverflowers----------------------------------------------------
+        # send_messages(stdscr, cursor, canvas, s)
+        # above line of code makes it work
+# -------------------------------------------------------------------------------------------------------
 
     except ExitException:
-        return  # exit function
+        return
 
 
 if __name__ == "__main__":
     
-    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGINT, signal_handler)  # handle ^c
 
+    # server ip and port are command-line args
     try:
         server, port = sys.argv[1:3]
     except ValueError:
