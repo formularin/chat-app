@@ -139,6 +139,13 @@ if __name__ == "__main__":
     
     signal.signal(signal.SIGINT, signal_handler)
     
+    argv = sys.argv[1:]
+    if len(argv) < 2:
+        raise Exception('requires server ip and port number as arguments')
+
+    server = argv[0]
+    port = argv[1]
+
     os.system("stty -echo") 
     password = input("Password: ")
     os.system("stty echo")
@@ -154,9 +161,7 @@ if __name__ == "__main__":
         encrypted = f.read()
 
     if password == fernet.decrypt(encrypted).decode("utf-8"):
-    
-        server = input("server: ")
-        port = input("port: ")
+        
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((server, int(port)))
         print("\033[1;32mSuccessfully connected to the server!\033[0m")   

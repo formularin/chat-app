@@ -73,6 +73,12 @@ if __name__ == "__main__":
 
     signal.signal(signal.SIGINT, signal_handler)
     
+    argv = sys.argv[1:]
+    if len(argv) < 1:
+        raise Exception('requires port number as argument')
+
+    port = argv[0]
+
     os.system("stty -echo")
     password = input("Password: ")
     os.system("stty echo")
@@ -91,8 +97,7 @@ if __name__ == "__main__":
 
         ip = subprocess.check_output(
                 "ifconfig | grep \"...\....\..\....\" | cut -d ' ' -f2",
-                shell=True).decode("utf-8")[:-1] 
-        port = input("port: ")
+                shell=True).decode("utf-8")[:-1]
 
         # create socket
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
