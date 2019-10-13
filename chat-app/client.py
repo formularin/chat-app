@@ -3,8 +3,13 @@ import signal
 import socket
 import os
 import threading
+import logging
+
+logging.basicConfig(filename='/Users/Mukeshkhare/Desktop/projects/python/chat-app/chat-app.log', level=logging.INFO)
 
 from cryptography.fernet import Fernet
+
+from getch import get_input
 
 HOME = f"/Users/{getpass.getuser()}"
 
@@ -17,9 +22,11 @@ def send_messages():
     Sends input to server which
     sends to other clients
     """
-    
     while True:
-        msg = input()
+        chars = []
+        get_input(chars)
+        msg = ''.join(chars)
+        logging.info(msg)
         if msg != "":
             s.send(bytes(msg, "utf-8"))
         print("\033[A                             \033[A")

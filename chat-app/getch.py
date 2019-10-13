@@ -43,20 +43,25 @@ def get_input(chars):
     Gets keyboard input and constantly
     edits list `chars` accordingly
     """
-
-    getch = _Getch()
-    while True:
-        key = getch()
-        if ord(key) == 3:
-            raise KeyboardInterrupt
-        elif ord(key) == 127:
-            chars = chars[:-1]
-            sys.stdout.write('\b')
-            sys.stdout.write(' ')
-            sys.stdout.write('\b')
-            sys.stdout.flush()
-        else:
-            chars.append(key)
-            sys.stdout.write(key)
-            sys.stdout.flush()
-        time.sleep(0.01)
+    with open('/Users/Mukeshkhare/Desktop/projects/python/chat-app/file.txt', 'w') as f:
+        getch = _Getch()
+        while True:
+            key = getch()
+            if ord(key) == 3:
+                raise KeyboardInterrupt
+            elif ord(key) == 127:
+                chars.pop(-1)
+                sys.stdout.write('\b')
+                sys.stdout.write(' ')
+                sys.stdout.write('\b')
+                sys.stdout.flush()
+            elif ord(key) == 13:
+                sys.stdout.write('\n')
+                sys.stdout.flush()
+                return
+            else:
+                chars.append(key)
+                sys.stdout.write(key)
+                sys.stdout.flush()
+            f.write(''.join(chars))
+            time.sleep(0.01)
