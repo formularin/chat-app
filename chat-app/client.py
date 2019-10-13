@@ -4,11 +4,8 @@ import signal
 import socket
 import os
 import threading
-import logging
 import time
 import sys
-
-logging.basicConfig(filename='/Users/Mukeshkhare/Desktop/projects/python/chat-app/chat-app.log', level=logging.INFO)
 
 from cryptography.fernet import Fernet
 
@@ -61,7 +58,6 @@ def send_messages(username):
             # gi.start()
             get_input(chars)
             msg = ''.join(chars)
-            logging.info(msg)
             if msg != "":
                 s.send(bytes(msg, "utf-8"))
             print("\033[A                             \033[A")
