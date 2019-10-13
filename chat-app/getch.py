@@ -50,11 +50,14 @@ def get_input(chars):
             if ord(key) == 3:
                 raise KeyboardInterrupt
             elif ord(key) == 127:
-                chars.pop(-1)
-                sys.stdout.write('\b')
-                sys.stdout.write(' ')
-                sys.stdout.write('\b')
-                sys.stdout.flush()
+                try:
+                    chars.pop(-1)
+                    sys.stdout.write('\b')
+                    sys.stdout.write(' ')
+                    sys.stdout.write('\b')
+                    sys.stdout.flush()
+                except IndexError:
+                    pass
             elif ord(key) == 13:
                 sys.stdout.write('\n')
                 sys.stdout.flush()
