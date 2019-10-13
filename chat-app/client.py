@@ -3,7 +3,6 @@ import getpass
 import signal
 import socket
 import sys
-import threading
 import time
 
 from cryptography.fernet import Fernet
@@ -132,13 +131,7 @@ def main(stdscr, server, port):
         username = ask_for_input(stdscr, cursor, canvas, "username: ")
         s.send(bytes(username, 'utf-8'))
 
-        # using thread because later will have to simeltaneously receive messages
-        sm = threading.Thread(target=send_messages, args=(stdscr, cursor, canvas, s))
-        sm.start()
-# -------------------------------for stackoverflowers----------------------------------------------------
-        # send_messages(stdscr, cursor, canvas, s)
-        # above line of code makes it work
-# -------------------------------------------------------------------------------------------------------
+        send_messages(stdscr, cursor, canvas, s)
 
     except ExitException:
         return
