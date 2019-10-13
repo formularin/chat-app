@@ -1,9 +1,11 @@
+from copy import copy
 import getpass
 import signal
 import socket
 import os
 import threading
 import logging
+import time
 
 logging.basicConfig(filename='/Users/Mukeshkhare/Desktop/projects/python/chat-app/chat-app.log', level=logging.INFO)
 
@@ -17,15 +19,45 @@ def signal_handler(sig, frame):
     print("exiting the server...")
     os._exit(1)
 
-def send_messages():
+def send_messages(username):
     """
     Sends input to server which
     sends to other clients
     """
+
+    def sense_change(chars):
+        """
+        Sends signals to server when user is typing or has stopped typing
+        
+        {username} >> 5 means user has started typing
+        {username} >> 6 means user has stopped typing
+        """
+        previous_chars = chars[:]
+        frame = 0
+        # the most recent frame where there was a difference between previous_chars and chars
+        last_frame_typing = 0
+        current_state = "lazy"
+        while True:
+            if previous_chars != chars:
+                if current_state == "lazy":
+                    s.send(f'{username} >> 6')
+                    current_state = "typing"
+                previous_chars = chars[:]
+                last_frame_typing = copy(frame)
+            else:
+                if (current_state == "typing") and (frame - last_frame_typing == 200):
+                    s.send(f'{username} >> 5')
+                    current_state = "lazy"
+                    
+            frame += 1
+            time.sleep(0.01)
+            
+
     try:
         while True:
             chars = []
-            get_input(chars)
+            gi = threading.Thread(target=get_input, args=(chars,))
+            gi.start()
             msg = ''.join(chars)
             logging.info(msg)
             if msg != "":
@@ -97,7 +129,7 @@ if __name__ == "__main__":
         username = input("username: ")
         s.send(bytes(username, 'utf-8'))    
 
-        sm = threading.Thread(target=send_messages)
+        sm = threading.Thread(target=send_messages, args=[username])
         rm = threading.Thread(target=receive_messages, args=[username])
         sm.start()
         rm.start()
