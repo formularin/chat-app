@@ -5,7 +5,9 @@ import socket
 import os
 import threading
 import time
+import traceback
 import sys
+import logging
 
 from cryptography.fernet import Fernet
 
@@ -13,6 +15,8 @@ from getch import get_input
 
 HOME = f"/Users/{getpass.getuser()}"
 
+
+logging.basicConfig(filename="/Users/Mukeshkhare/Desktop/projects/python/chat-app/chat-app.log", level=logging.INFO)
 
 def thread(func):
     """Exception handling decorator for threads"""
@@ -25,7 +29,7 @@ def thread(func):
             else:
                 error_file = f'{HOME}/chat-app-errors'
                 with open(error_file, 'w+') as f:
-                    f.write(str(e))
+                    f.write(traceback.format_exc())
                 print(f'Program failed. See {error_file} for traceback.')
             os._exit(1)
     return thread_with_exception_handling
@@ -43,45 +47,70 @@ def send_messages(username):
     sends to other clients
     """
 
-    def sense_change(chars):
+    @thread
+    def sense_change(chars, enter_pressed):
         """
         Sends signals to server when user is typing or has stopped typing
         
-        {username} >> 5 means user has started typing
-        {username} >> 6 means user has stopped typing
+        5 means user has started typing
+        6 means user has stopped typing
         """
+        previous_enter_pressed = 0
         previous_chars = chars[:]
         frame = 0
         # the most recent frame where there was a difference between previous_chars and chars
         last_frame_typing = 0
         current_state = "lazy"
+
         while True:
+
+            if previous_enter_pressed != enter_pressed.value:
+                logging.info("enter key pressed")
+                last_frame_typing = 0
+                frame = 0
+                current_state = "lazy"
+                previous_enter_pressed = copy(enter_pressed.value)
+
             if previous_chars != chars:
                 if current_state == "lazy":
-                    s.send(f'{username} >> 6')
+                    # started typing
+                    s.send(bytes('5', 'utf-8'))
                     current_state = "typing"
                 previous_chars = chars[:]
                 last_frame_typing = copy(frame)
             else:
                 if (current_state == "typing") and (frame - last_frame_typing == 200):
-                    s.send(f'{username} >> 5')
+                    # stoppped typing
+                    s.send(bytes('6', 'utf-8'))
                     current_state = "lazy"
-                    
+
             frame += 1
             time.sleep(0.01)
 
     @thread
-    def get_message_inputs():
+    def get_message_inputs(chars, enter_pressed):
         while True:
-            chars = []
             get_input(chars)
+            enter_pressed.increment()
             msg = ''.join(chars)
             if msg != "":
                 s.send(bytes(msg, "utf-8"))
             print("\033[A                             \033[A")
 
-    gi = threading.Thread(target=get_message_inputs)
+    class EnterPressed:
+        """dummy class that can be changed from within function"""
+        def __init__(self):
+            self.value = 0
+        def increment(self):
+            self.value += 1
+
+    enter_pressed = EnterPressed()
+    chars = []
+    gi = threading.Thread(target=get_message_inputs, args=(chars, enter_pressed,))
+    sc = threading.Thread(target=sense_change, args=(chars, enter_pressed,))
+   
     gi.start()
+    sc.start()
 
 
 @thread
@@ -104,6 +133,8 @@ def receive_messages(username):
                 print(f"\033[32m{data[1:]}\033[0m")
             else:
                 print(f"\033[31m{data[1:]}\033[0m")
+        elif data[0] == "4":
+            print(data[1:])
         sys.stdout.write('\r')
         sys.stdout.flush()
 

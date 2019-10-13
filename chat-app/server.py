@@ -32,6 +32,16 @@ def handle_client_message(clientsocket, address):
                 msg = "2" + username + " has joined the server!"
                 for c in clientsockets[:-1]:
                     c.send(bytes(msg, "utf-8"))
+            elif msg.decode('utf-8') == "5":
+                msg = "4" + username + " has started typing"
+                for c in clientsockets:
+                    if c != clientsocket:
+                        c.send(bytes(msg, "utf-8"))
+            elif msg.decode('utf-8') == "6":
+                msg = "4" + username + " has stopped typing"
+                for c in clientsockets:
+                    if c != clientsocket:
+                        c.send(bytes(msg, "utf-8"))
             else:
                 msg = f"1{username}: " + msg.decode("utf-8")
                 for c in clientsockets:
