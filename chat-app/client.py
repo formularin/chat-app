@@ -13,10 +13,30 @@ from getch import get_input
 
 HOME = f"/Users/{getpass.getuser()}"
 
+
+def thread(func):
+    """Exception handling decorator for threads"""
+    def thread_with_exception_handling(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except Exception as e:
+            if str(e) == 'keyboard interrupt':
+                print('exiting the server...')
+            else:
+                error_file = f'{HOME}/chat-app-errors'
+                with open(error_file, 'w+') as f:
+                    f.write(str(e))
+                print(f'Program failed. See {error_file} for traceback.')
+            os._exit(1)
+    return thread_with_exception_handling
+
+
 def signal_handler(sig, frame):
     print("exiting the server...")
     os._exit(1)
 
+
+@thread
 def send_messages(username):
     """
     Sends input to server which
@@ -49,61 +69,41 @@ def send_messages(username):
                     
             frame += 1
             time.sleep(0.01)
-            
+    
+    while True:
+        chars = []
+        get_input(chars)
+        msg = ''.join(chars)
+        if msg != "":
+            s.send(bytes(msg, "utf-8"))
+        print("\033[A                             \033[A")
 
-    try:
-        while True:
-            chars = []
-            # gi = threading.Thread(target=get_input, args=(chars,))
-            # gi.start()
-            get_input(chars)
-            msg = ''.join(chars)
-            if msg != "":
-                s.send(bytes(msg, "utf-8"))
-            print("\033[A                             \033[A")
-    except Exception as e:
-        if str(e) == 'keyboard interrupt':
-            print('exiting the server...')
-        else:
-            error_file = f'{HOME}/chat-app-errors'
-            with open(error_file, 'w+') as f:
-                f.write(str(e))
-            print(f'Program failed. See {error_file} for traceback.')
-        os._exit(1)
+    # gi = threading.Thread(target=get_message_inputs)
+    # gi.start()
 
-       
+
+@thread
 def receive_messages(username):
     """
     Constantly reveieves data from
     server and prints to console
     """
-    try:
-        while True:
-            data = s.recv(1024).decode("utf-8")
-            if data[0] == "1":
-                user = data[1:].split(": ")[0] + ": "
-                message = data[1:][len(user):]
-                if user[:-2] != username:
-                    print(f"\033[1;34m{user}\033[0m{message}")
-                else:  # message was sent by user
-                    print(f"\033[1;32m{user}\033[0m{message}")
-            elif data[0] == "2":
-                if "joined the server" in data:
-                    print(f"\033[32m{data[1:]}\033[0m")
-                else:
-                    print(f"\033[31m{data[1:]}\033[0m")
-            sys.stdout.write('\r')
-            sys.stdout.flush()
-    
-    except Exception as e:
-        if str(e) == 'keyboard interrupt':
-            print('exiting the server...')
-        else:
-            error_file = f'{HOME}/chat-app-errors'
-            with open(error_file, 'w+') as f:
-                f.write(str(e))
-            print(f'Program failed. See {error_file} for traceback.')
-        os._exit(1)
+    while True:
+        data = s.recv(1024).decode("utf-8")
+        if data[0] == "1":
+            user = data[1:].split(": ")[0] + ": "
+            message = data[1:][len(user):]
+            if user[:-2] != username:
+                print(f"\033[1;34m{user}\033[0m{message}")
+            else:  # message was sent by user
+                print(f"\033[1;32m{user}\033[0m{message}")
+        elif data[0] == "2":
+            if "joined the server" in data:
+                print(f"\033[32m{data[1:]}\033[0m")
+            else:
+                print(f"\033[31m{data[1:]}\033[0m")
+        sys.stdout.write('\r')
+        sys.stdout.flush()
 
 
 if __name__ == "__main__":
