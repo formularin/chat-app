@@ -13,3 +13,8 @@ chat-app/__pycache__
 build
 dist
 chat_app.egg-info
+file.txt
+chat-app/test
+display-char.py
+chat-app.log
+canvas.log
