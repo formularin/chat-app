@@ -9,7 +9,6 @@ from cryptography.fernet import Fernet
 HOME = f"/Users/{getpass.getuser()}"
 
 def signal_handler(sig, frame):
-    print("\033[A                             \033[A")
     print("exiting the server...")
     os._exit(1)
 
