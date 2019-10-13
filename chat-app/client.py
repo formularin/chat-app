@@ -18,16 +18,12 @@ def send_messages():
     Sends input to server which
     sends to other clients
     """
-        
-    def get_input():
-        msg = input("")
+    
+    while True:
+        msg = input()
         if msg != "":
             s.send(bytes(msg, "utf-8"))
         print("\033[A                             \033[A")
-
-    while True:
-        ipt = threading.Thread(target=get_input)
-        is_writing = threading.Thread(target=get_typing)        
 
        
 def receive_messages(username):

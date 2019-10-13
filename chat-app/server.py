@@ -29,7 +29,7 @@ def handle_client_message(clientsocket, address):
         if msg != b'':
             if n_messages == 0:
                 username = msg.decode("utf-8")
-                msg = username + " has joined the server!"
+                msg = "2" + username + " has joined the server!"
                 for c in clientsockets[:-1]:
                     c.send(bytes(msg, "utf-8"))
             else:
