@@ -92,6 +92,8 @@ def send_messages(username):
             if msg != "":
                 s.send(bytes(msg, "utf-8"))
             print("\033[A                             \033[A")
+            for i in range(len(chars)):
+                chars.pop(0)
 
     class EnterPressed:
         """dummy class that can be changed from within function"""
@@ -161,7 +163,7 @@ if __name__ == "__main__":
         encrypted = f.read()
 
     if password == fernet.decrypt(encrypted).decode("utf-8"):
-        
+
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((server, int(port)))
         print("\033[1;32mSuccessfully connected to the server!\033[0m")   
