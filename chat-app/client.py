@@ -7,7 +7,6 @@ import threading
 import time
 import traceback
 import sys
-import logging
 
 from cryptography.fernet import Fernet
 
@@ -15,8 +14,6 @@ from getch import get_input
 
 HOME = f"/Users/{getpass.getuser()}"
 
-
-logging.basicConfig(filename="/Users/Mukeshkhare/Desktop/projects/python/chat-app/chat-app.log", level=logging.INFO)
 
 def thread(func):
     """Exception handling decorator for threads"""
@@ -65,7 +62,6 @@ def send_messages(username):
         while True:
 
             if previous_enter_pressed != enter_pressed.value:
-                logging.info("enter key pressed")
                 last_frame_typing = 0
                 frame = 0
                 current_state = "lazy"
