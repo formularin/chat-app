@@ -69,17 +69,19 @@ def send_messages(username):
                     
             frame += 1
             time.sleep(0.01)
-    
-    while True:
-        chars = []
-        get_input(chars)
-        msg = ''.join(chars)
-        if msg != "":
-            s.send(bytes(msg, "utf-8"))
-        print("\033[A                             \033[A")
 
-    # gi = threading.Thread(target=get_message_inputs)
-    # gi.start()
+    @thread
+    def get_message_inputs():
+        while True:
+            chars = []
+            get_input(chars)
+            msg = ''.join(chars)
+            if msg != "":
+                s.send(bytes(msg, "utf-8"))
+            print("\033[A                             \033[A")
+
+    gi = threading.Thread(target=get_message_inputs)
+    gi.start()
 
 
 @thread
