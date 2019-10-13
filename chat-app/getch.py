@@ -47,7 +47,7 @@ def get_input(chars):
     while True:
         key = getch()
         if ord(key) == 3:
-            raise KeyboardInterrupt
+            raise Exception('keyboard interrupt')
         elif ord(key) == 127:
             try:
                 chars.pop(-1)

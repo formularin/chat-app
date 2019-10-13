@@ -6,6 +6,7 @@ import os
 import threading
 import logging
 import time
+import sys
 
 logging.basicConfig(filename='/Users/Mukeshkhare/Desktop/projects/python/chat-app/chat-app.log', level=logging.INFO)
 
@@ -56,18 +57,22 @@ def send_messages(username):
     try:
         while True:
             chars = []
-            gi = threading.Thread(target=get_input, args=(chars,))
-            gi.start()
+            # gi = threading.Thread(target=get_input, args=(chars,))
+            # gi.start()
+            get_input(chars)
             msg = ''.join(chars)
             logging.info(msg)
             if msg != "":
                 s.send(bytes(msg, "utf-8"))
             print("\033[A                             \033[A")
     except Exception as e:
-        error_file = f'{HOME}/chat-app-errors'
-        with open(error_file, 'w+') as f:
-            f.write(str(e))
-        print(f'Program failed. See {error_file} for traceback.')
+        if str(e) == 'keyboard interrupt':
+            print('exiting the server...')
+        else:
+            error_file = f'{HOME}/chat-app-errors'
+            with open(error_file, 'w+') as f:
+                f.write(str(e))
+            print(f'Program failed. See {error_file} for traceback.')
         os._exit(1)
 
        
@@ -91,12 +96,17 @@ def receive_messages(username):
                     print(f"\033[32m{data[1:]}\033[0m")
                 else:
                     print(f"\033[31m{data[1:]}\033[0m")
+            sys.stdout.write('\r')
+            sys.stdout.flush()
     
     except Exception as e:
-        error_file = f'{HOME}/chat-app-errors'
-        with open(error_file, 'w+') as f:
-            f.write(str(e))
-        print(f'Program failed. See {error_file} for traceback.')
+        if str(e) == 'keyboard interrupt':
+            print('exiting the server...')
+        else:
+            error_file = f'{HOME}/chat-app-errors'
+            with open(error_file, 'w+') as f:
+                f.write(str(e))
+            print(f'Program failed. See {error_file} for traceback.')
         os._exit(1)
 
 
